@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- home page for my old kentucky home lab-->
+<html>
+<head>
+<meta charset="utf-8" />
+<title>My Old Kentucky Home</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+<h1 id="title">My Old Kentucky Home</h1>
+
+<video src="https://www.cs.tufts.edu/comp/20/my_old_kentucky_home.mp4" id="music_video" controls></video>
+<div id="lyrics"></div>
+
+<script>
+    numLines= 13;
+    var script = [  
+                    "<p>*Intro*</p>",
+                    "<p>The sun shines bright in My Old Kentucky Home</p>",
+                    "<p>'Tis summer, the people are gay</p>",
+                    "<p>Thene corn-top's ripe and the meadow's in the bloom</p>",
+                    "<p>While the birds make music all the day</p>",
+                    "<p>The young folks roll on the little cabin floor</p>",
+                    "<p>All merry, all happy and bright</p>",
+                    "<p>By 'n' by hard times comes a knocking at the door</p>",
+                    "<p>Then My Old Kentucky Home, good night!</p>",
+                    "<p>Weep no more my lady</p>",
+                    "<p>Oh weep no more today</p>",
+                    "<p>We will sing one song</p>",
+                    "<p>For My Old Kentucky Home</p>",
+                    "<p>For My Old Kentucky Home, far away</p>"];
+
+    var images = [  "",
+                    "<img src=\"horse1.jpg\" alt=\"A test image\">",
+                    "<img src=\"horse2.png\" alt=\"A test image\">",
+                    "<img src=\"horse3.jpg\" alt=\"A test image\">",
+                    "<img src=\"horse4.jpg\" alt=\"A test image\">"];
+    // Complete this section and create a CSS file named style.css
+
+    function getImageIndex(time) {
+        if (time <= 7)
+            return 0
+        else 
+            return (Math.floor(time/10) % 4) + 1;
+    }
+
+    function getScriptIndex(time) {
+        if (time > 84) {return 13 } else
+        if (time > 79) {return 12 } else
+        if (time > 75) {return 11 } else
+        if (time > 70) {return 10 } else
+        if (time > 63) {return 9  } else
+        if (time > 55) {return 8  } else
+        if (time > 48) {return 7  } else
+        if (time > 42) {return 6  } else
+        if (time > 35) {return 5  } else
+        if (time > 28) {return 4  } else
+        if (time > 21) {return 3  } else
+        if (time > 15) {return 2  } else
+        if (time > 7)  {return 1  } else
+                       {return 0  }
+    }
+
+    function getHTML (time) {
+
+        return "<p>"+script[getScriptIndex(time)]+"</p>"
+             + images[getImageIndex(time)];
+    }
+
+    var video = document.getElementById("music_video");
+    var textField = document.getElementById("lyrics");
+    video.addEventListener("timeupdate", 
+                           function (){
+                                textField.innerHTML = getHTML(video.currentTime);
+                           }, 
+                           false);
+</script>
+</body>
+</html>    
