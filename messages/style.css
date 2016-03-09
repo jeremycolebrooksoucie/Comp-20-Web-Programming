@@ -1,1 +1,26 @@
 /* Your CSS here... */
+.message {
+}
+.username {
+	font-style: italic;
+	font-size: 75%;
+}
+
+body {
+	background-color: purple;
+}
+
+
+.line {
+	background-color: yellow;
+	font-size: 150%;
+	border-radius: 25px;
+	padding: 20px;
+}
+
+p {
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	padding: 30px;
+
+}
+
