@@ -1,8 +1,9 @@
+// Jeremy Colebrook-Soucie, lab 6
 function parse() 
 {
 	var request = new XMLHttpRequest();
 
-	request.open("GET", "data.json", true);
+	request.open("GET", "http://messagehub.herokuapp.com/messages.json", true);
 	request.onreadystatechange = function () 
 	{
 		elem = document.getElementById("messages");
@@ -14,11 +15,10 @@ function parse()
 				                  data[i].username + "</span></span></p>"
 			}
 		} else if (request.readyState == 4 && request.status != 200) {
-				document.getElementById("list").innerHTML = "<p>Something went wrong";
+				elem.innerHTML = "<p>Something went wrong";
 		}
 	};
 
-		// Step 3: Fire off the request
 		request.send(null); // null means no data nec to send
 
 
