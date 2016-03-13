@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>Your Location</title>
+        <!--<script src="lab.js"></script>-->
+
+        <script>
+            
+            function init() {
+                var myLat = 0;
+                var myLng = 0;
+
+
+                console.log("Hit Me One");
+                if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+                    console.log("Hit Me Two");
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                            console.log("Hit Me Three");
+                            myLat = position.coords.latitude;
+                            myLng = position.coords.longitude;
+                            elem = document.getElementById("info");
+                            elem.innerHTML = "<h1>You are in " + myLat + ", " + myLng + "</h1>";
+
+                            makeRequest(myLat, myLng)
+                        });
+                    console.log("Hit Me Four");
+                }
+                else {
+                    alert("Geolocation is not supported by your web browser.  What a shame!");
+                }
+            }
+
+            function makeRequest(lat, lng) {
+                var username = "DEVIN_WALTERS";
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation", true);
+                var data = "login="+username+"&lat="+lat+"&lng="+lng;
+
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function() {//Call a function when the state changes.
+                    if(xhr.readyState == 4 && xhr.status == 200) {
+                        console.log(xhr.responsetext);
+                    }
+                    else if (xhr.readyState == 4 && xhr.status != 200) {
+                        alert("server request failed");
+                    }
+                }
+                xhr.send(data);
+            }
+        </script>
+    </head>
+    
+    <body onload="init()">
+        <div id="info">
+            <h1>Getting your location...</h1>
+        </div>
+    </body>
+</html>
