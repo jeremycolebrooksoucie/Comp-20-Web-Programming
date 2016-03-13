@@ -1,27 +1,25 @@
-var map;
-
+// initiates the map
 function init() {
     var myLat = 0;
     var myLng = 0;
 
-    if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+    if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
                 myLat = position.coords.latitude;
                 myLng = position.coords.longitude;
 
                 initMap(myLat, myLng);
-                //makeRequest(myLat, myLng)
             });
     }
     else {
-        alert("Geolocation is not supported by your web browser.  What a shame!");
+        alert("Geolocation is not supported by your web browser.");
     }
 }
 
 function initMap(lat, lng) {
     var userLoc = new google.maps.LatLng(lat, lng);
 
-    map = new google.maps.Map(document.getElementById('map'), {
+    var map = new google.maps.Map(document.getElementById('map'), {
         center: userLoc,
         zoom: 18,
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -35,44 +33,50 @@ function initMap(lat, lng) {
 
 }
 
+// makes request to serve for username and displays all info on map
 function makeAndParseRequest(lat, lng, map, username) {
-    
-
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation", true);
+    xhr.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation",
+             true);
     var data = "login="+username+"&lat="+lat+"&lng="+lng;
 
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    xhr.onreadystatechange = function() {//Call a function when the state changes.
+    xhr.onreadystatechange = function() {
         if(xhr.readyState == 4 && xhr.status == 200) {
             var data = JSON.parse(xhr.responseText);
             landmarks = data.landmarks;
             people = data.people;
 
-            //parse landmarks and select best
+            //parse landmarks and select best, also check vs null
             var bestDistance = 999999;
-            var bestPlace = null;
-            landmarks.forEach(function (cur, i, arr) {
-                var d = addLandmark(cur, map, lat, lng);
-                if (d < bestDistance)
-                {
-                    bestPlace = cur;
-                    bestDistance = d;
-                }
-            }, (map, bestPlace, bestDistance));
+            var bestPlace = {geometry   : {coordinates  : [lng, lat]}, 
+                             properties : {Location_Name: "No loc found"}};
+            if(landmarks) {
+                landmarks.forEach(function (cur, i, arr) {
+                    var d = addLandmark(cur, map, lat, lng);
+                    if (d < bestDistance)
+                    {
+                        bestPlace = cur;
+                        bestDistance = d;
+                    }
+                }, (map, bestPlace, bestDistance));
+            }
 
-            // parse people
-            people.forEach(function (cur, i, arr) {
-                addPerson(cur, map, lat, lng);
-            }, map);
+            // parse people/check for null
+            if(people) {
+                people.forEach(function (cur, i, arr) {
+                    addPerson(cur, map, lat, lng);
+                }, map);
+            }
 
-            /* add user last so their on top */
+            /* add user's icon */
             var userLoc = new google.maps.LatLng(lat, lng);
 
             var marker = new google.maps.Marker({
                 position: userLoc,
-                title: username + "<BR> Closest Location: " + bestPlace.properties.Location_Name,
+                title: username + "<BR> Closest Location: " + 
+                       bestPlace.properties.Location_Name,
                 icon: new google.maps.MarkerImage(
                             "user.png",
                             new google.maps.Size(40, 40),
@@ -80,7 +84,8 @@ function makeAndParseRequest(lat, lng, map, username) {
                             new google.maps.Point(20, 20))
             });
             marker.setMap(map);
-            
+            // bring user icon to the front
+            marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 
             var infowindow = new google.maps.InfoWindow();
             
@@ -88,8 +93,7 @@ function makeAndParseRequest(lat, lng, map, username) {
             google.maps.event.addListener(marker, 'click', function() {
                 infowindow.setContent(marker.title);
                 infowindow.open(map, marker);
-
-                 var line = new google.maps.Polyline({
+                var line = new google.maps.Polyline({
                         path: [{lat: lat, lng: lng},
                                {lat: bestPlace.geometry.coordinates[1],
                                 lng: bestPlace.geometry.coordinates[0]}],
@@ -98,8 +102,10 @@ function makeAndParseRequest(lat, lng, map, username) {
                         strokeWeight: 3
                 })
                 line.setMap(map);
+                
             });
 
+            // add user start window
             var startwindow = new google.maps.InfoWindow();
             startwindow.setContent(username);
             startwindow.open(map, marker);
@@ -107,18 +113,15 @@ function makeAndParseRequest(lat, lng, map, username) {
                 else if (xhr.readyState == 4 && xhr.status != 200) {
                     alert("server request failed");
                 }
+        // if not nearest location was calculated
+        
     }
     xhr.send(data);
 
 }
 
-
-/*
-properties: Object
-Details: "<b>Historic Place Name: </b>Frost, Walter, House<BR><b>Address: </b>10 Frost St.<BR><b>City: </b>Cambridge<BR><b>County: </b>Middlesex<BR><b>State: </b>MASSACHUSETTS<BR><BR><u>Geographic Coordinates:</u><BR><b>Latitude: </b>42.38624<BR><b>Longitude: </b>-71.11742<BR><BR><b>NPS Reference Number: </b>82001942<BR><b>Date Listed: </b>19820413<BR><b>Notes: </b>Cambridge MRA<BR><b>Type: </b>point<BR><b>Geocode Match: </b>1<BR><BR><p align="center">A Service of:<BR><a href="http://www.cr.nps.gov/nr/">National Register of Historic Places</a><BR><a href="http://www.nps.gov/">National Park Service</a></p>"
-Location_Name: "Frost, Walter, House"
-__proto__: Object
-*/
+// adds a landmark to map if under 1 mile away from user
+// returns distance of that landmark to user
 function addLandmark(landmark, map, userLat, userLng)
 {
     var loc = new google.maps.LatLng(landmark.geometry.coordinates[1], 
@@ -129,6 +132,7 @@ function addLandmark(landmark, map, userLat, userLng)
     if (distance >= 1)
         return distance;
     else {
+
 
         var marker = new google.maps.Marker({
             position: loc,
@@ -141,10 +145,7 @@ function addLandmark(landmark, map, userLat, userLng)
         });
         marker.setMap(map);
         
-        // This is a global info window...
         var infowindow = new google.maps.InfoWindow();
-        
-        // Open info window on click of marker
         google.maps.event.addListener(marker, 'click', function() {
             infowindow.setContent(marker.title);
             infowindow.open(map, marker);
@@ -152,12 +153,8 @@ function addLandmark(landmark, map, userLat, userLng)
         return distance;
     }
 }
-/*
-Object {_id: "56d269aaff1f7c21263ce5de",
- login: "CHRIS_WOODWARD", 
- lat: 10, lng: 10, 
- created_at: "2016-02-28T03:29:46.627Z"}
-*/
+
+// adds a person in json format to map. Distance calculated with userLat/Lng
 function addPerson(person, map, userLat, userLng)
 {
     var loc = new google.maps.LatLng(person.lat, 
@@ -167,8 +164,8 @@ function addPerson(person, map, userLat, userLng)
                                                 [person.lng, person.lat], true)
                               * 100) / 100;
 
-
     var text = person.login + "<BR>Distance : " + distance + " miles";
+
     var marker = new google.maps.Marker({
         position: loc,
         title: text,
@@ -180,16 +177,18 @@ function addPerson(person, map, userLat, userLng)
     });
     marker.setMap(map);
     
-    // This is a global info window...
     var infowindow = new google.maps.InfoWindow();
     
-    // Open info window on click of marker
     google.maps.event.addListener(marker, 'click', function() {
         infowindow.setContent(marker.title);
         infowindow.open(map, marker);
     });
 }
 
+// calculates haversine distance between coord1 and 2, 
+// coords is [lng, lat] format
+// taken from http://stackoverflow.com/questions/14560999/ ...
+//                     using-the-haversine-formula-in-javascript
 function haversineDistance(coords1, coords2, isMiles) {
     function toRad(x) {
         return x * Math.PI / 180;
