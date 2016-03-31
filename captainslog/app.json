@@ -3,4 +3,5 @@
   "description": "A barebones Node.js app using Express 4",
   "repository": "https://github.com/tuftsdev/comp20-jcolebrooksoucie",
   "keywords": ["node", "express", "static"],
+  "image": "heroku/nodejs"
 }
