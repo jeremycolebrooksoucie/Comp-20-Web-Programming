@@ -1,7 +1,6 @@
 {
   "name": "captainlog",
   "description": "A barebones Node.js app using Express 4",
-  "repository": "https://github.com/heroku/node-js-getting-started",
-  "logo": "http://node-js-sample.herokuapp.com/jeremycolebrooksoucie",
+  "repository": "https://github.com/tuftsdev/comp20-jcolebrooksoucie",
   "keywords": ["node", "express", "static"],
 }
