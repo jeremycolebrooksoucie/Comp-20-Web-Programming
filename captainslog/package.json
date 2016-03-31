@@ -1,5 +1,5 @@
 {
-  "name": "captainlog",
+  "name": "node-js-getting-started",
   "version": "0.1.5",
   "description": "A sample Node.js app using Express 4",
   "main": "index.js",
@@ -11,11 +11,11 @@
     "express": "4.13.3"
   },
   "engines": {
-    "node": "0.10.25"
+    "node": "0.12.7"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tuftsdev/comp20-jcolebrooksoucie"
+    "url": "https://github.com/heroku/node-js-getting-started"
   },
   "keywords": [
     "node",
