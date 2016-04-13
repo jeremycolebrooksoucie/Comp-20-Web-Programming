@@ -36,7 +36,7 @@ function initMap(lat, lng) {
 // makes request to serve for username and displays all info on map
 function makeAndParseRequest(lat, lng, map, username) {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation",
+    xhr.open("POST", "https://thepowerfulsunblindsme.herokuapp.com/sendLocation",
              true);
     var data = "login="+username+"&lat="+lat+"&lng="+lng;
 
