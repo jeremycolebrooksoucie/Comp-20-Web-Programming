@@ -1,0 +1,10 @@
+Ideas
+	XSS - javascript injection for async JS code that sends location to my server
+
+	Website defacement
+
+	Try to kill server by overloading with stuff
+	Note, we have mongodb URI sooooo.... yeah, should be able to kill it
+
+	Mongodb malicious insertion
+

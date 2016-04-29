@@ -1,0 +1,15 @@
+Raw Outline
+
+
+
+
+Introductions
+This report is a writeup of my security tests on client-side and server-side code for Tufts University's Comp 20 Assignment 2 and Assignment 3. The client side component of this code consists of an application which determines a user's geolocation, reports that location to a server, and displays that users location on a map along with other users/landmarks received from the server. The server side component contains 2 API that can be used to interact with stored data as well as a web page that displays data. Testing 
+
+Methodology
+
+Abstract of Findings
+
+Issues Found
+
+Conclusion
